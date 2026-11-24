@@ -4,9 +4,9 @@ import { createClient } from "@supabase/supabase-js";
 import { MapPin, CalendarDays, Heart, Send, ChevronDown, Clock3, ExternalLink, Flower2, MessageCircle } from "lucide-react";
 import "./styles.css";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://ymyqpywwfpnbahpmitsp.supabase.co";
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || "sb_publishable_-aVdAObkumJrcU8zKhaeiw_1xV9DSfW";
+const supabase = createClient(supabaseUrl, supabaseKey);
 const WEDDING = new Date("2026-12-08T20:30:00+06:00");
 const MAP = "https://www.google.com/maps/search/?api=1&query=RB+Convention+Hall%2C+Arakan+Road%2C+Chandgaon%2C+Chattogram+4212";
 

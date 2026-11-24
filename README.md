@@ -16,7 +16,7 @@ Responsive React/Vite invitation inspired by the screenshots supplied in chat. D
    - `VITE_SUPABASE_PUBLISHABLE_KEY` (legacy `VITE_SUPABASE_ANON_KEY` is also supported)
 4. The guestbook will save every message in **Table Editor → wedding_wishes**. It also displays new wishes live to everyone viewing the invitation.
 5. Never put the Supabase service-role key in the website.
-6. For Vercel, add both variables in **Settings → Environment Variables** and redeploy. Local `.env.local` values are not included in production builds.
+6. This project includes its public Supabase URL and publishable key as defaults, so Vercel can connect without environment variables. To use a different Supabase project, set both variables in **Vercel → Settings → Environment Variables** and redeploy. Local `.env.local` values are not included in production builds.
 
 If the form says the guestbook is not connected, one or both Vite variables are missing. If it says a wish could not be sent, confirm `supabase/schema.sql` was run in the same Supabase project as the configured URL, then check the browser console and Supabase logs for the underlying error.
 
