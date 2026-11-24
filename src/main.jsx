@@ -5,7 +5,7 @@ import { MapPin, CalendarDays, Heart, Send, ChevronDown, Clock3, ExternalLink, F
 import "./styles.css";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 const WEDDING = new Date("2026-12-08T20:30:00+06:00");
 const MAP = "https://www.google.com/maps/search/?api=1&query=RB+Convention+Hall%2C+Arakan+Road%2C+Chandgaon%2C+Chattogram+4212";
@@ -63,13 +63,19 @@ function Guestbook() {
  },[]);
  const submit=async e=>{
   e.preventDefault();if(!supabase){setStatus("The guestbook is not connected yet. The website owner needs to finish the Supabase setup.");return}
-  setBusy(true);setStatus("");
   const cleanName=name.trim().slice(0,80),cleanMessage=message.trim().slice(0,1200);
-  const {data,error}=await supabase.from("wedding_wishes").insert({guest_name:cleanName,message:cleanMessage}).select().single();
-  if(error){setStatus("Sorry, your wish could not be sent. Please try again.");setBusy(false);return}
-  setWishes(old=>[data,...old.filter(x=>x.id!==data.id)].slice(0,30));
-  setName("");setMessage("");setStatus("Your wish has been sent. Thank you!");setBusy(false);
-  fetch("/api/notify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:cleanName,message:cleanMessage})}).catch(()=>{});
+  if(!cleanName||!cleanMessage){setStatus("Please enter your name and wishes.");return}
+  setBusy(true);setStatus("");
+  try{
+   const {data,error}=await supabase.from("wedding_wishes").insert({guest_name:cleanName,message:cleanMessage}).select().single();
+   if(error){console.error("Could not save wedding wish:",error);setStatus("Sorry, your wish could not be sent. Please check your connection and try again.");return}
+   setWishes(old=>[data,...old.filter(x=>x.id!==data.id)].slice(0,30));
+   setName("");setMessage("");setStatus("Your wish has been sent. Thank you!");
+   fetch("/api/notify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:cleanName,message:cleanMessage})}).catch(error=>console.error("Could not send wedding wish notification:",error));
+  }catch(error){
+   console.error("Could not save wedding wish:",error);
+   setStatus("Sorry, your wish could not be sent. Please check your connection and try again.");
+  }finally{setBusy(false)}
  };
  return <section className="guestbook-section section-wrap" id="guestbook">
   <SectionTitle eyebrow="Leave a Little Love" title="Guestbook"/>

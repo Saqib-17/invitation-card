@@ -6,6 +6,7 @@ create table if not exists public.wedding_wishes (
   created_at timestamptz not null default now()
 );
 alter table public.wedding_wishes enable row level security;
+grant select, insert on public.wedding_wishes to anon, authenticated;
 -- Guests can submit wishes; public reads let the guestbook show new entries.
 create policy "Anyone can submit wedding wishes"
 on public.wedding_wishes for insert to anon, authenticated
